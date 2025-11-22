@@ -86,18 +86,24 @@ final AccountDioService _accountService = AccountDioService();
     print(listAccounts);
   } on DioException catch (dioException) {
     print("------------------------------------------------");
-    print("\n🔴 Erro ao buscar contas:");
+    print("\n Erro ao buscar contas:");
 
-    // Aqui vamos tratar os diferentes tipos de erro
-    if (dioException.type == DioExceptionType.connectionError) {
-      print("📡 Sem conexão com a internet.");
-      print("Verifique sua conexão e tente novamente.");
+  // Aqui vamos tratar os diferentes tipos de erro
+  if (dioException.type == DioExceptionType.connectionError) {
+    // Verifica se é erro de DNS (URL incorreta)
+    if (dioException.message?.contains('Failed host lookup') ?? false) {
+      print(" URL incorreta ou servidor indisponível.");
+      print(" Verifique o endereço e tente novamente.");
     } else {
-      print("❌ ${dioException.message}");
+      print(" Sem conexão com a internet.");
+      print(" Verifique sua conexão e tente novamente.");
     }
+  } else {
+    print("❌ ${dioException.message}");
+  }
 
-    print("------------------------------------------------");
-    print("");
+  print("------------------------------------------------");
+  print("");
   } on Exception catch (e) {
     print("\nNão consegui recuperar os dados da conta.");
     print("Erro: $e");

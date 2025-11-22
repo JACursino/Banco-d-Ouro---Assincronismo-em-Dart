@@ -9,7 +9,7 @@ class AccountDioService {
   final StreamController<String> _streamController = StreamController<String>();
   Stream<String> get streamInfos => _streamController.stream;
 
-  String url = "https://api.github.com/gists/b52a4ebbde885199f357ba69855c82a9";
+  String url = "https://www.google.com";
 
   // Os métodos virão aqui
   Future<List<Account>> getAll() async {
