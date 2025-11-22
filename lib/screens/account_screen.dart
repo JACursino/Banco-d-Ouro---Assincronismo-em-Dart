@@ -1,5 +1,6 @@
 import 'package:dart_assincronismo/services/account_service.dart';
 import 'package:dart_assincronismo/models/account.dart';
+import 'package:http/http.dart';
 import 'dart:io';
 import 'package:uuid/uuid.dart'; // Importe pacote para geração de códigos aleatórios
 
@@ -80,7 +81,10 @@ class AccountScreen {
     try {
       List<Account> listAccounts = await _accountService.getAll();
       print(listAccounts);
-    } on Exception {
+    } on ClientException { //Filho
+      print("Não foi possível alcançar o servidor.");
+      print("Tente novamente mais tarde.");
+    } on Exception { //Pai
       print("Não consegui recuperar os dados da conta.");
       print("Tente novamente mais tarde.");
     }
