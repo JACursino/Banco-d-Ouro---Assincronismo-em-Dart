@@ -1,7 +1,8 @@
 //import 'package:dart_assincronismo/services/account_service.dart';
+import 'package:dio/dio.dart';
 import 'package:dart_assincronismo/services/account_dio_service.dart';
 import 'package:dart_assincronismo/models/account.dart';
-import 'package:http/http.dart';
+//import 'package:http/http.dart';
 import 'dart:io';
 import 'package:uuid/uuid.dart'; // Importe pacote para geração de códigos aleatórios
 
@@ -81,26 +82,29 @@ final AccountDioService _accountService = AccountDioService();
 
   _getAllAccounts() async {
     try {
-      List<Account> listAccounts = await _accountService.getAll();
-      print(listAccounts);
-    } on ClientException catch (clientException) {
-      /*Dentro de catch pode ser atribuido qualquer nome*/
-      print("------------------------------------------------");
-      print("\nNão foi possível alcançar o servidor.");
-      print("Tente novamente mais tarde.\n");
-      print(clientException.message);
-      print(clientException.uri);
-      print("------------------------------------------------");
-      print("");
-    } on Exception {
-      //Pai
-      print("\nNão consegui recuperar os dados da conta.");
-      print("Tente novamente mais tarde.\n");
-      print("");
-    } finally {
-      //Sempre vai ser executado
-      print("${DateTime.now()} | Ocorreu uma tentativa de consulta.\n");
+    List<Account> listAccounts = await _accountService.getAll();
+    print(listAccounts);
+  } on DioException catch (dioException) {
+    print("------------------------------------------------");
+    print("\n🔴 Erro ao buscar contas:");
+
+    // Aqui vamos tratar os diferentes tipos de erro
+    if (dioException.type == DioExceptionType.connectionError) {
+      print("📡 Sem conexão com a internet.");
+      print("Verifique sua conexão e tente novamente.");
+    } else {
+      print("❌ ${dioException.message}");
     }
+
+    print("------------------------------------------------");
+    print("");
+  } on Exception catch (e) {
+    print("\nNão consegui recuperar os dados da conta.");
+    print("Erro: $e");
+    print("");
+  } finally {
+    print("${DateTime.now()} | Ocorreu uma tentativa de consulta.\n");
+  }
   }
 
   // Novo método para tratar a string de nome e chamar o serviço assíncrono
