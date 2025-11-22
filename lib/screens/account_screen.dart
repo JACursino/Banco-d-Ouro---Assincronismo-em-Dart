@@ -95,6 +95,9 @@ class AccountScreen {
       print("\nNão consegui recuperar os dados da conta.");
       print("Tente novamente mais tarde.\n");
       print("");
+    } finally {
+      //Sempre vai ser executado
+      print("${DateTime.now()} | Ocorreu uma tentativa de consulta.\n");
     }
   }
 
