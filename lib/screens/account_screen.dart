@@ -7,8 +7,8 @@ import 'dart:io';
 import 'package:uuid/uuid.dart'; // Importe pacote para geração de códigos aleatórios
 
 class AccountScreen {
-//  final AccountService _accountService = AccountService();
-final AccountDioService _accountService = AccountDioService();
+  //  final AccountService _accountService = AccountService();
+  final AccountDioService _accountService = AccountDioService();
   final Uuid _uuid = Uuid();
 
   void initializeStream() {
@@ -82,65 +82,107 @@ final AccountDioService _accountService = AccountDioService();
 
   _getAllAccounts() async {
     try {
-    List<Account> listAccounts = await _accountService.getAll();
-    print(listAccounts);
-  } on DioException catch (dioException) {
-    print("------------------------------------------------");
-    print("\n Erro ao buscar contas:");
+      List<Account> listAccounts = await _accountService.getAll();
+      print(listAccounts);
+    } on DioException catch (dioException) {
+      print("------------------------------------------------");
+      print("\n Erro ao buscar contas:");
 
-  // Aqui vamos tratar os diferentes tipos de erro
-  if (dioException.type == DioExceptionType.connectionError) {
-    // Verifica se é erro de DNS (URL incorreta)
-    if (dioException.message?.contains('Failed host lookup') ?? false) {
-      print(" URL incorreta ou servidor indisponível.");
-      print(" Verifique o endereço e tente novamente.");
-    } else {
-      print(" Sem conexão com a internet.");
-      print(" Verifique sua conexão e tente novamente.");
-    }
-  } else {
-    print("❌ ${dioException.message}");
+      // Aqui vamos tratar os diferentes tipos de erro
+      if (dioException.type == DioExceptionType.connectionError) {
+        // Verifica se é erro de DNS (URL incorreta)
+        if (dioException.message?.contains('Failed host lookup') ?? false) {
+          print(" URL incorreta ou servidor indisponível.");
+          print(" Verifique o endereço e tente novamente.");
+        } else {
+          print(" Sem conexão com a internet.");
+          print(" Verifique sua conexão e tente novamente.");
+        }
+
+      } else if (dioException.type == DioExceptionType.badResponse) {
+        // Erros de resposta HTTP (400, 404, 500, etc)
+        int? statusCode = dioException.response?.statusCode;
+          if (statusCode == 404) {
+            print("🔍 Recurso não encontrado (erro 404).");
+            print("Verifique se a URL está correta.");
+          } else if (statusCode == 500) {
+            print("🔧 Erro no servidor (erro 500).");
+            print("Tente novamente mais tarde.");
+          } else if (statusCode == 401 || statusCode == 403) {
+            print("🔐 Acesso negado (erro $statusCode).");
+            print("Verifique suas credenciais.");
+          } else {
+            print("⚠️ Erro na resposta do servidor (código $statusCode).");
+        }
+
+      } else {
+        print("❌ ${dioException.message}");
+      }
+        print("------------------------------------------------");
+        print("");
+      } on TypeError {
+        print("------------------------------------------------");
+        print("\n🔧 Erro de formatação:");
+        print("Os dados recebidos não estão no formato esperado.");
+        print("O servidor pode estar retornando HTML ao invés de JSON.");
+        print("------------------------------------------------");
+        print("");
+      } on Exception catch (e) {
+        print("\nNão consegui recuperar os dados da conta.");
+        print("Erro: $e");
+        print("");
+      } finally {
+        print("${DateTime.now()} | Ocorreu uma tentativa de consulta.\n");
+      }
   }
 
-  print("------------------------------------------------");
-  print("");
-  } on TypeError {
+_readAndAddAccount(String fullName, double balance) async {
+  // Lógica de separação de nome e sobrenome
+  List<String> parts = fullName.split(" ");
+  String firstName = parts.isNotEmpty ? parts.first : "Desconhecido";
+  String lastName = parts.length > 1
+      ? parts.sublist(1).join(" ")
+      : "Não Informado";
+
+  // NOVO ID: Geração de um ID ÚNICO
+  String newId = _uuid.v4();
+
+  // Geração da nova Account com os dados lidos + ID único
+  Account newAccount = Account(
+    id: newId,
+    name: firstName,
+    lastName: lastName,
+    balance: balance,
+  );
+
+  try {
+    await _accountService.addAccount(newAccount);
+    print("\n✅ Conta adicionada com sucesso!");
+    print("Nome: $firstName $lastName");
+    print("Saldo: R\$ ${balance.toStringAsFixed(2)}\n");
+  } on DioException catch (dioException) {
     print("------------------------------------------------");
-    print("\n🔧 Erro de formatação:");
-    print("Os dados recebidos não estão no formato esperado.");
-    print("O servidor pode estar retornando HTML ao invés de JSON.");
+    print("\n🔴 Erro ao adicionar conta:");
+
+    if (dioException.type == DioExceptionType.connectionError) {
+      if (dioException.message?.contains('Failed host lookup') ?? false) {
+        print("🌐 URL incorreta ou servidor indisponível.");
+      } else {
+        print("📡 Sem conexão com a internet.");
+      }
+    } else if (dioException.type == DioExceptionType.badResponse) {
+      int? statusCode = dioException.response?.statusCode;
+      print("⚠️ Erro na resposta do servidor (código $statusCode).");
+    } else {
+      print("❌ ${dioException.message}");
+    }
+
     print("------------------------------------------------");
     print("");
   } on Exception catch (e) {
-    print("\nNão consegui recuperar os dados da conta.");
-    print("Erro: $e");
-    print("");
+    print("\n❌ Não consegui adicionar a conta.");
+    print("Erro: $e\n");
   } finally {
-    print("${DateTime.now()} | Ocorreu uma tentativa de consulta.\n");
+    print("${DateTime.now()} | Tentativa de adicionar conta.\n");
   }
-  }
-
-  // Novo método para tratar a string de nome e chamar o serviço assíncrono
-  _readAndAddAccount(String fullName, double balance) async {
-    // Lógica de separação de nome e sobrenome (como no passo anterior)
-    List<String> parts = fullName.split(" ");
-    String firstName = parts.isNotEmpty ? parts.first : "Desconhecido";
-    // O restante da string, se houver, será o sobrenome.
-    String lastName = parts.length > 1
-        ? parts.sublist(1).join(" ")
-        : "Não Informado";
-
-    // NOVO ID: Geração de um ID ÚNICO
-    // v4 gera um ID aleatório (version 4) - temos algo em torno de 7 versoões de geração de IDs
-    String newId = _uuid.v4();
-
-    // Geração da nova Account com os dados lidos + ID único
-    Account newAccount = Account(
-      id: newId,
-      name: firstName,
-      lastName: lastName,
-      balance: balance,
-    );
-    await _accountService.addAccount(newAccount);
-  }
-}
+}}
