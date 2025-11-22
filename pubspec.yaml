@@ -12,6 +12,7 @@ dependencies:
   http: ^1.6.0
   # Para introduzir uma prática real de geração de identificadores únicos usando o pacote uuid.
   uuid: ^4.3.3 # Use a versão estável mais recente
+  dio: ^5.4.0
 
 dev_dependencies:
   lints: ^6.0.0
