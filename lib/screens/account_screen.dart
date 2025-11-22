@@ -8,14 +8,12 @@ class AccountScreen {
   final Uuid _uuid = Uuid();
 
   void initializeStream() {
-    _accountService.streamInfos.listen(
-      (event) {
-        print(event);
-      },
-    );
+    _accountService.streamInfos.listen((event) {
+      print(event);
+    });
   }
 
-// NOVO MÉTODO: Exibe o cabeçalho de boas-vindas
+  // NOVO MÉTODO: Exibe o cabeçalho de boas-vindas
   void displayHeader() {
     print("--------------------------------------------------");
     print("      🏦 BEM-VINDO(A) AO BANCO D'OURO 🥇\n");
@@ -25,7 +23,6 @@ class AccountScreen {
   }
 
   void runChatBot() async {
-
     bool isRunning = true;
     while (isRunning) {
       print("Como eu posso te ajudar? (digite o número desejado)");
@@ -44,24 +41,24 @@ class AccountScreen {
             }
           case "2":
             {
-            print("Qual o nome completo da pessoa?");
-            String? name = stdin.readLineSync();
+              print("Qual o nome completo da pessoa?");
+              String? name = stdin.readLineSync();
 
-            if (name != null) {
-              print("Qual o saldo inicial da conta?");
-              String? balanceString = stdin.readLineSync();
+              if (name != null) {
+                print("Qual o saldo inicial da conta?");
+                String? balanceString = stdin.readLineSync();
 
-              if (balanceString != null) {
-                double? balance = double.tryParse(balanceString);
+                if (balanceString != null) {
+                  double? balance = double.tryParse(balanceString);
 
-                if (balance != null) {
-                  // Separar Nome e Sobrenome e chamar a nova função de adição
-                  await _readAndAddAccount(name, balance);
-                } else {
-                  print("Valor de saldo inválido. Tente novamente.");
+                  if (balance != null) {
+                    // Separar Nome e Sobrenome e chamar a nova função de adição
+                    await _readAndAddAccount(name, balance);
+                  } else {
+                    print("Valor de saldo inválido. Tente novamente.");
+                  }
                 }
               }
-            }
               break;
             }
           case "3":
@@ -80,8 +77,13 @@ class AccountScreen {
   }
 
   _getAllAccounts() async {
-    List<Account> listAccounts = await _accountService.getAll();
-    print(listAccounts);
+    try {
+      List<Account> listAccounts = await _accountService.getAll();
+      print(listAccounts);
+    } on Exception {
+      print("Não consegui recuperar os dados da conta.");
+      print("Tente novamente mais tarde.");
+    }
   }
 
   // Novo método para tratar a string de nome e chamar o serviço assíncrono
@@ -90,13 +92,15 @@ class AccountScreen {
     List<String> parts = fullName.split(" ");
     String firstName = parts.isNotEmpty ? parts.first : "Desconhecido";
     // O restante da string, se houver, será o sobrenome.
-    String lastName = parts.length > 1 ? parts.sublist(1).join(" ") : "Não Informado";
+    String lastName = parts.length > 1
+        ? parts.sublist(1).join(" ")
+        : "Não Informado";
 
     // NOVO ID: Geração de um ID ÚNICO
     // v4 gera um ID aleatório (version 4) - temos algo em torno de 7 versoões de geração de IDs
     String newId = _uuid.v4();
 
-      // Geração da nova Account com os dados lidos + ID único
+    // Geração da nova Account com os dados lidos + ID único
     Account newAccount = Account(
       id: newId,
       name: firstName,

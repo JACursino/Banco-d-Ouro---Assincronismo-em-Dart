@@ -7,7 +7,7 @@ import 'dart:convert';
 class AccountService {
   final StreamController<String> _streamController = StreamController<String>();
   Stream<String> get streamInfos => _streamController.stream;
-  String url = "https://api.github.com/gists/b52a4ebbde885199f357ba69855c82a9";
+  String url = "https://api.github.com.br/gists/b52a4ebbde885199f357ba69855c82a9";
 
   Future<List<Account>> getAll() async {
     Response response = await get(Uri.parse(url));
