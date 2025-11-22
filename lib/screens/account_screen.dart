@@ -104,6 +104,13 @@ final AccountDioService _accountService = AccountDioService();
 
   print("------------------------------------------------");
   print("");
+  } on TypeError {
+    print("------------------------------------------------");
+    print("\n🔧 Erro de formatação:");
+    print("Os dados recebidos não estão no formato esperado.");
+    print("O servidor pode estar retornando HTML ao invés de JSON.");
+    print("------------------------------------------------");
+    print("");
   } on Exception catch (e) {
     print("\nNão consegui recuperar os dados da conta.");
     print("Erro: $e");
