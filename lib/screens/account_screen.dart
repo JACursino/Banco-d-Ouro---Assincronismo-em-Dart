@@ -1,11 +1,13 @@
-import 'package:dart_assincronismo/services/account_service.dart';
+//import 'package:dart_assincronismo/services/account_service.dart';
+import 'package:dart_assincronismo/services/account_dio_service.dart';
 import 'package:dart_assincronismo/models/account.dart';
 import 'package:http/http.dart';
 import 'dart:io';
 import 'package:uuid/uuid.dart'; // Importe pacote para geração de códigos aleatórios
 
 class AccountScreen {
-  final AccountService _accountService = AccountService();
+//  final AccountService _accountService = AccountService();
+final AccountDioService _accountService = AccountDioService();
   final Uuid _uuid = Uuid();
 
   void initializeStream() {
