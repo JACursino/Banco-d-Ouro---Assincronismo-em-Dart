@@ -1,0 +1,58 @@
+1) Problema ao enviar mensagens
+Em um site de bate-papo online, uma das principais funcionalidades é o envio de mensagens. No entanto, problemas de conexão podem impedir o envio, e é importante garantir que a pessoa usuária seja informada quando isso acontecer.
+
+A função sendMessage deveria capturar a Exception e exibir a mensagem: "Conexão com a internet falhou. Por favor, tente novamente mais tarde.", mas isso não está acontecendo.
+
+Sua tarefa é corrigir o código abaixo para que a exceção seja devidamente tratada e a informação de falha seja exibida.
+
+void sendMessage(String message){
+  try {
+    // código que faz o envio da mensagem.
+    print("Mensagem enviada!");
+  } on Exception{
+    print ("Conexão com a internet falhou. Por favor, tente novamente mais tarde!");
+
+  }
+}
+
+
+2) Corrigir URL incorreta em aplicação de notícias
+Durante o desenvolvimento de um app de notícias, ao tentar buscar dados de um servidor, você pode encontrar um problema se o endereço inserido estiver incorreto.
+
+Para garantir que a aplicação continue funcionando corretamente, será necessário capturar a Exception e exibir: "Servidor não encontrado, verifique o endereço e tente novamente.”.
+
+  try {
+    final response = await http.get(Uri.parse("https://incorreto.com/news"));
+    print("dados carregados");
+  } on Exception {
+    print("Servidor nao encontrado, verifique o endereco e tente novamente.");
+  }
+
+
+
+3) Tratamento de erros em aplicação de clima
+O aplicativo de condições climáticas está com um grande problema, quando a comunicação com o servidor falha, o aplicativo para de funcionar e finaliza a execução sem informar nada para pessoa usuária.
+
+Sabendo que o problema está na comunicação com o servidor, sua tarefa é ajustar o código para tratar essas falhas e garantir que o usuário receba uma mensagem quando isso acontecer. Para isso, quando houver falha de comunicação com o servidor, você deverá capturar a Exception e exibir: "Erro no servidor".
+
+  try {
+    final response = await http.get(Uri.parse("https://api.weather.example.com/current"));
+    // Código para buscar dados do clima
+  } on Exception {
+    print("Erro no servidor");
+  }
+
+4) Validando entrada do usuário
+Você está realizando um investimento financeiro e para calcular os seus rendimentos futuros. está usando a função futureIncome. No entanto, você percebeu que essa função, ao receber algo diferente de um número, acabava finalizando inesperadamente seu programa.
+
+Implemente uma verificação para garantir que a entrada seja numérica. Se não for, capture a Exception e mostre: "Apenas números são aceitos".
+
+void futureIncome(String entradaUsuario){
+  try {
+    double investimento = double.parse(entradaUsuario);
+    // Calcular rendimentos futuros a partir do investimento
+    print("rendimentos calculados!");
+  } on Exception {
+    print("Apenas numeros sao aceitos");
+  }
+}
