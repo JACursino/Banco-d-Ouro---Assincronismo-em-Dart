@@ -81,12 +81,20 @@ class AccountScreen {
     try {
       List<Account> listAccounts = await _accountService.getAll();
       print(listAccounts);
-    } on ClientException { //Filho
-      print("Não foi possível alcançar o servidor.");
-      print("Tente novamente mais tarde.");
-    } on Exception { //Pai
-      print("Não consegui recuperar os dados da conta.");
-      print("Tente novamente mais tarde.");
+    } on ClientException catch (clientException) {
+      /*Dentro de catch pode ser atribuido qualquer nome*/
+      print("------------------------------------------------");
+      print("\nNão foi possível alcançar o servidor.");
+      print("Tente novamente mais tarde.\n");
+      print(clientException.message);
+      print(clientException.uri);
+      print("------------------------------------------------");
+      print("");
+    } on Exception {
+      //Pai
+      print("\nNão consegui recuperar os dados da conta.");
+      print("Tente novamente mais tarde.\n");
+      print("");
     }
   }
 
