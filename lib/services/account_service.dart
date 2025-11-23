@@ -14,8 +14,9 @@ class AccountService {
     _streamController.add("${DateTime.now()} | Requisição de leitura.");
 
     Map<String, dynamic> mapResponse = json.decode(response.body);
-    List<dynamic> listDynamic =
-        json.decode(mapResponse["files"]["accounts.json"]["content"]);
+    List<dynamic> listDynamic = json.decode(
+      mapResponse["files"]["accounts.json"]["content"],
+    );
 
     List<Account> listAccounts = [];
 
@@ -30,7 +31,10 @@ class AccountService {
   addAccount(Account account) async {
     List<Account> listAccounts = await getAll();
     listAccounts.add(account);
+    save(listAccounts, accountName: account.name);
+  }
 
+  save(List<Account> listAccounts, {String accountName = ""}) async {
     List<Map<String, dynamic>> listContent = [];
     for (Account account in listAccounts) {
       listContent.add(account.toMap());
@@ -52,10 +56,9 @@ class AccountService {
 
     if (response.statusCode.toString()[0] == "2") {
       _streamController.add(
-          "${DateTime.now()} | Requisição de adição bem sucedida(${account.name}).");
+        "${DateTime.now()} | Requisição adição bem sucedida ($accountName).");
     } else {
-      _streamController.add(
-          "${DateTime.now()} | Requisição de adição falhou(${account.name}).");
+      _streamController.add("${DateTime.now()} | Requisição falhou ($accountName).");
     }
   }
 
@@ -69,13 +72,17 @@ class AccountService {
     // Percorre a lista procurando a conta com o ID correspondente
     for (Account account in listAccounts) {
       if (account.id == id) {
-        _streamController.add("${DateTime.now()} | Conta encontrada: ${account.name}");
+        _streamController.add(
+          "${DateTime.now()} | Conta encontrada: ${account.name}",
+        );
         return account;
       }
     }
 
     // Se chegou aqui, não encontrou
-    _streamController.add("${DateTime.now()} | Conta com ID $id não encontrada.");
+    _streamController.add(
+      "${DateTime.now()} | Conta com ID $id não encontrada.",
+    );
     return null;
   }
 
@@ -92,7 +99,8 @@ class AccountService {
     // Se não encontrar (index == -1), não faz nada
     if (index == -1) {
       _streamController.add(
-          "${DateTime.now()} | Falha ao atualizar: conta ID ${updatedAccount.id} não existe.");
+        "${DateTime.now()} | Falha ao atualizar: conta ID ${updatedAccount.id} não existe.",
+      );
       return;
     }
 
@@ -122,10 +130,12 @@ class AccountService {
 
     if (response.statusCode.toString()[0] == "2") {
       _streamController.add(
-          "${DateTime.now()} | Conta atualizada com sucesso: ${updatedAccount.name}");
+        "${DateTime.now()} | Conta atualizada com sucesso: ($updatedAccount.name)",
+      );
     } else {
       _streamController.add(
-          "${DateTime.now()} | Falha ao atualizar conta: ${updatedAccount.name}");
+        "${DateTime.now()} | Falha ao atualizar conta: ($updatedAccount.name)",
+      );
     }
   }
 
@@ -135,14 +145,13 @@ class AccountService {
     List<Account> listAccounts = await getAll();
 
     // Procura o índice da conta
-    int index = listAccounts.indexWhere(
-      (account) => account.id == id,
-    );
+    int index = listAccounts.indexWhere((account) => account.id == id);
 
     // Se não encontrar, não faz nada
     if (index == -1) {
       _streamController.add(
-          "${DateTime.now()} | Falha ao deletar: conta ID $id não existe.");
+        "${DateTime.now()} | Falha ao deletar: conta ID $id não existe.",
+      );
       return;
     }
 
@@ -175,10 +184,12 @@ class AccountService {
 
     if (response.statusCode.toString()[0] == "2") {
       _streamController.add(
-          "${DateTime.now()} | Conta deletada com sucesso: $accountName");
+        "${DateTime.now()} | Conta deletada com sucesso: $accountName",
+      );
     } else {
       _streamController.add(
-          "${DateTime.now()} | Falha ao deletar conta: $accountName");
+        "${DateTime.now()} | Falha ao deletar conta: $accountName",
+      );
     }
   }
 }
