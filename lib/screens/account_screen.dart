@@ -104,6 +104,7 @@ class AccountScreen {
   // Novo método para tratar a string de nome e chamar o serviço assíncrono
   _readAndAddAccount(String fullName, double balance) async {
     // Lógica de separação de nome e sobrenome (como no passo anterior)
+    try {
     List<String> parts = fullName.split(" ");
     String firstName = parts.isNotEmpty ? parts.first : "Desconhecido";
     // O restante da string, se houver, será o sobrenome.
@@ -121,7 +122,11 @@ class AccountScreen {
       name: firstName,
       lastName: lastName,
       balance: balance,
+      accountType: "Tipo de Conta Corrente",
     );
     await _accountService.addAccount(newAccount);
+      } on Exception {
+        print("Ocorreu um erro ao adicionar a conta.");
+    }
   }
 }

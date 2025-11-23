@@ -6,6 +6,7 @@ class Account {
   String name;
   String lastName;
   double balance;
+  String accountType;
 
   Account({
     //Construtor
@@ -13,6 +14,7 @@ class Account {
     required this.name,
     required this.lastName,
     required this.balance,
+    required this.accountType,
   });
 
   factory Account.fromMap(Map<String, dynamic> map) {
@@ -21,6 +23,7 @@ class Account {
       name: map['name'] as String,
       lastName: map['lastName'] as String,
       balance: (map['balance'] as num).toDouble(), // ✅ Correção 1
+      accountType: map['accountType'] as String,
     );
   }
 
@@ -30,19 +33,23 @@ class Account {
       'name': name,
       'lastName': lastName,
       'balance': balance,
+      'accountType': accountType,
     };
   }
+
   Account copyWith({
     String? id,
     String? name,
     String? lastName,
     double? balance,
+    String? accountType,
   }) {
     return Account(
       id: id ?? this.id,
       name: name ?? this.name,
       lastName: lastName ?? this.lastName,
       balance: balance ?? this.balance,
+      accountType: accountType ?? this.accountType,
     );
   }
 
