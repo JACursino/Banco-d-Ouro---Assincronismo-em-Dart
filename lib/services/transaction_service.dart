@@ -13,11 +13,12 @@ class TransactionService {
 final AccountService _accountService = AccountService();
   String url = "https://api.github.com/gists/413c0aefe6c6abc464581c29029c8ace";
 
-makeTransaction({
-required String idSender,
-required String idReceiver,
-required double amount,
-}) async {
+
+    Future<void> makeTransaction({
+      required String idSender,
+      required String idReceiver,
+      required double amount,
+    }) async {
 
     List<Account> listAccounts = await _accountService.getAll();
 
